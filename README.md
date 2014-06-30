@@ -33,3 +33,18 @@ var outputTree = compileSass(inputTrees, inputFile, outputFile, options);
 ```js
 var appCss = compileSass(sourceTrees, 'myapp/app.scss', 'assets/app.css');
 ```
+
+## Source Maps
+
+You can enable source maps by setting `sourceMap: true` in the options. It's
+likely that your SASS source files aren't in the output tree (and hence are not
+available to your dev tools over HTTP), so you'll need to tell your dev tools
+where to find the source files:
+
+#### Instructions for Chrome
+
+1. Open DevTools > Sources
+1. Reveal the Sources pane on the left hand side (it might be hidden)
+1. Right-click and use _Add folder to workspace_ to add your project as a Workspace
+1. Locate a SASS source files in the tree
+1. Right-click on one of them and use _Map to File System Resource..._ to create the mapping
