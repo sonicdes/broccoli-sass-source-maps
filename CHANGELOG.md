@@ -1,5 +1,9 @@
 # master
 
+# 0.2.1
+
+* Guard against passing a tree instead of array
+
 # 0.2.0
 
 * Upgrade to node-sass ^0.9.2
