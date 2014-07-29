@@ -7,6 +7,7 @@ var mapSeries = require('promise-map-series')
 var sass = require('node-sass')
 var _ = require('lodash')
 var rsvp = require('rsvp')
+var sourceMap = require('source-map');
 
 
 module.exports = SassCompiler
@@ -40,6 +41,9 @@ SassCompiler.prototype.write = function (readTree, destDir) {
         includePaths: includePaths,
         outFile: destFile,
         success: function() {
+          if (self.sassOptions.sourceMap) {
+            self.processSourceMap(includePaths, sassOptions);
+          }
           deferred.resolve();
         },
         error: function(err) {
@@ -51,3 +55,22 @@ SassCompiler.prototype.write = function (readTree, destDir) {
       return deferred.promise;
     })
 }
+
+SassCompiler.prototype.processSourceMap = function(includePaths, sassOptions) {
+  debugger;
+  var outputFile = sassOptions.outFile;
+  var sourceMapFile = sassOptions.sourceMap === true
+      ? outputFile + '.map'
+      : path.resolve(outputFile, sassOptions.sourceMap);
+  var sourceMap = JSON.parse(fs.readFileSync(sourceMapFile));
+  sourceMap.sourcesContent = sourceMap.sourcesContent || [];
+  for (var i = 0; i < sourceMap.sources.length; i++) {
+    if (!sourceMap.sourcesContent[i]) {
+      var sourceFile = sourceMap.sources[i].split('/').slice(1).join('/');
+      sourceFile = includePathSearcher.findFileSync(sourceFile, includePaths);
+      var sourceContent = fs.readFileSync(sourceFile);
+      sourceMap.sourcesContent[i] = sourceContent;
+    }
+  }
+  console.log(sourceMap);
+};
